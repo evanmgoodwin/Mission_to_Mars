@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import datetime as dt
 
+# Set up executable path
+executable_path = {"executable_path": "chromedriver.exe"}
+
 def scrape_all():
 
     # Initiate headless driver for deployment
@@ -21,13 +24,7 @@ def scrape_all():
             "last_modified": dt.datetime.now()
     }
 
-    browser.quit()
-
     return data
-
-# Set up executable path and initialize chromer browser in splinter
-executable_path = {"executable_path": "chromedriver.exe"}
-browser = Browser("chrome", **executable_path, headless=False)
 
 def mars_news(browser):
 
@@ -66,10 +63,11 @@ def mars_news(browser):
 def featured_image(browser):
 
     # Visit url
-    url = "https:..www.jpl.nasa.gov/spaceimages/?serach=&category=Mars"
+    url = "https://www.jpl.nasa.gov/spaceimages/?serach=&category=Mars"
     browser.visit(url)
 
     # Find and click the full image button
+    browser.is_element_present_by_text("full_image", wait_time=1)
     full_image_elem = browser.find_by_id("full_image")
     full_image_elem.click()
 
@@ -108,14 +106,11 @@ def mars_facts():
         return None
     
     # Assign columns and set index of dataframe
-    df.columns=["description", "value"]
-    df.set_index("description", inplace=True)
+    df.columns=["Description", "Mars"]
+    df.set_index("Description", inplace=True)
 
     # Convert dataframe into HTML format and add bootstrap
     return df.to_html()
-
-# Close the automated broswer session
-browser.quit()
 
 if __name__ == "__main__":
     # If running as script, print scraped data
